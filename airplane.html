@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="./skate/jet-fighter-solid.svg" rel="shortcut icon" type="image/x-icon">
+    <link rel="stylesheet" href="./btn-sample.css">
+    <title>Shooter</title>
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    .bgc {
+        width: 100%;
+        height: 100vh;
+        position: fixed;
+        background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .box-container {
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        background: url(./skate/star1.jpg);
+        background-size: cover;
+        background-position: center;
+    }
+
+    .box-wrap {
+        margin-top: 50px;
+        width: 800px;
+        height: 600px;
+        background: url(./skate/star2.jpg);
+        background-size: cover;
+        background-position: center;
+        position: relative;
+        overflow: hidden;
+        z-index: 0.5;
+    }
+
+    .box {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        position: absolute;
+        overflow: hidden;
+        background: url(./skate/plane.png);
+        background-size: cover;
+        background-position: center;
+        transition: 0.2s;
+        transform: rotate(-35deg);
+    }
+
+    .fire {
+        position: absolute;
+        width: 30px;
+        height: 3px;
+        outline: solid thin red;
+        background-color: rgb(254, 63, 0);
+        transition: .2s;
+    }
+
+    .count-fire {
+        font-size: 1.5rem;
+        font-weight: 600;
+        position: absolute;
+        bottom: 5px;
+        left: 60px;
+        color: white;
+    }
+
+    .count-score {
+        font-size: 1.5rem;
+        font-weight: 600;
+        position: absolute;
+        bottom: 5px;
+        right: 20px;
+        color: white;
+    }
+
+    .fire-img {
+        width: 40px;
+        height: 40px;
+        position: absolute;
+        bottom: 5px;
+        left: 10px;
+        color: white;
+    }
+
+    .fire-img img {
+        width: 100%;
+    }
+
+    .start-wall {
+        background: url(./skate/Asteroids01_GameDevMarket_Cover-700x400.png);
+        background-size: cover;
+        background-position: right;
+        width: 800px;
+        height: 600px;
+        position: absolute;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1;
+        transition: 1.5s ease;
+    }
+
+    .victory-wall {
+        background: url(./skate/League\ of\ Legends_\ Victory\ &\ Defeat.png);
+        background-size: cover;
+        background-position: center;
+        width: 800px;
+        height: 600px;
+        position: absolute;
+        top: -600px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 2.5;
+        transition: 1.5s ease-in;
+    }
+
+    .defeat-wall {
+        background: url(./skate/defeat.png);
+        background-size: cover;
+        background-position: center;
+        width: 800px;
+        height: 600px;
+        position: absolute;
+        top: -600px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 2.5;
+        transition: 1.5s ease-in;
+    }
+
+    .start-text {
+        font-size: 1.2rem;
+        font-weight: 500;
+        color: rgb(0, 0, 0);
+        transition: 0.5s;
+    }
+
+    .meteorite-wrap {
+        width: 1200px;
+        height: 600px;
+        position: absolute;
+        background-color: rgba(255, 255, 255, 0);
+        z-index: 2;
+        left: 800px;
+        transition: 0.5s;
+    }
+
+    .meteorite {
+        width: 100%;
+        height: 100%;
+        position: relative;
+    }
+
+    .stone {
+        width: 100px;
+        height: 100px;
+        background: url(./skate/Asteroids.png);
+        background-size: cover;
+        background-position: center;
+        position: absolute;
+        /* border: 3px solid red; */
+    }
+
+    .fix {
+        width: 20px;
+        height: 20px;
+        background-color: white;
+        position: fixed;
+        top: -5px;
+        left: -5px;
+    }
+
+    .explode {
+        width: 100px;
+        height: 100px;
+        background: url(./skate/pngegg.png);
+        background-size: cover;
+        background-position: center;
+        animation: explode 0.5s;
+        opacity: 0;
+    }
+
+    @keyframes explode {
+        0% {
+            opacity: 1;
+            transform: scale(0);
+        }
+
+        50% {
+            opacity: 1;
+            transform: scale(0.5);
+        }
+
+        100% {
+            opacity: 0;
+            transform: scale(1);
+        }
+    }
+</style>
+
+<body>
+    <!-- <audio hidden src="./BulletHit.mp3"></audio>
+    <audio class="boom" hidden src="./explode1.wav"></audio>
+    <audio class="victory" hidden src="./Victory.mp3"></audio>
+    <audio class="defeat" hidden src="./defeat.mp3"></audio> -->
+    <div class="bgc"></div>
+    <div class="box-container">
+        <div class="box-wrap">
+            <div class="victory-wall"></div>
+            <div class="defeat-wall"></div>
+            <div class="start-wall">
+                <button class="custom-btn btn-12 start-text"><span>Go!</span><span>Ready?</span></button>
+            </div>
+            <!-- <div class="fire"></div> -->
+            <div class="box">
+            </div>
+            <div class="count-fire">6 / 6</div>
+            <div class="count-score">SCORE : 0</div>
+            <div class="fire-img"><img src="./skate/bullet-9764.svg" alt=""></div>
+            <div class="meteorite-wrap">
+                <div class="meteorite">
+                    <!-- <div class="stone"></div> 隕石生成處 -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- <div class="explode"></div> -->
+    <!-- <div class="fix"></div> -->
+    <script src="./jquery-3.6.0.min.js"></script>
+    <script>
+
+        // start game click set & put meteorite
+        $('.start-text').click(function () {
+            $(this).css('display', 'none');
+            $(this).parent().css('opacity', '0');
+            // 產生隕石數量
+            for (let i = 0; i < 10; i++) {
+                let randomTop = Math.floor((Math.random() * 450)) + 50;
+                let randomLeft = Math.floor((Math.random() * 1150));
+                $('.meteorite').append('<div class="stone"></div>');
+                $('.stone').last().css('top', randomTop);
+                $('.stone').last().css('left', randomLeft);
+            }
+            console.log($('.meteorite .stone'));
+            stoneMove();
+        });
+
+
+
+        // move & shoot keydown setting
+        $(document).keydown(function (e) {
+            let box = $('.box');
+            let id = e.keyCode;
+            // console.log(id);
+            // 左
+            if (id === 37) {
+                // console.log(parseInt(box.css('left')));
+                if (parseInt(box.css('left')) > 0) {
+                    box.css('left', '-=50px')
+                } else {
+                    box.css('left', '0px');
+                }
+                // 上
+            } else if (id === 38) {
+                // console.log(parseInt(box.css('top')));
+                if (parseInt(box.css('top')) > 0) {
+                    box.css('top', '-=50px');
+                } else {
+                    box.css('top', '0px');
+                }
+                // 右
+            } else if (id === 39) {
+                // console.log(parseInt(box.css('left')));
+                if (parseInt(box.css('left')) < 700) {
+                    box.css('left', '+=50px');
+                } else {
+                    box.css('left', '700px');
+                }
+                // 下
+            } else if (id === 40) {
+                // console.log(box.css('top'));
+                if (parseInt(box.css('top')) < 500) {
+                    box.css('top', '+=50px');
+                } else {
+                    box.css('top', '500px');
+                }
+            } else if (id === 32) {
+                // 子彈數量最多6發設定
+                if ($('.box-wrap .fire').length < 6) {
+                    $('.box-wrap').append('<div class="fire"></div>');
+                    $('.fire').last().css('top', box.position().top + 58);
+                    $('.fire').last().css('left', box.position().left + 105);
+                    $('body').append('<audio class="shoot" hidden src="./BulletHit.mp3"></audio>');
+                    $('.shoot').last()[0].play();
+                }
+                // 即時更新子彈數量
+                $('.count-fire').text(6 - $('.box-wrap .fire').length + ' / 6');
+                withPromise()
+                    .then(shoot())
+            }
+        })
+
+        // using Promise + setInterval sovle fire speed question
+        function withPromise() {
+            return new Promise(resolve => {
+                resolve();
+            })
+        }
+
+        // shooting function
+        let shoot_id_array = [];
+        function shoot() {
+            console.log(123); // setInterval test
+
+            if (parseInt($('.fire').css('left')) > 750) {
+                $('.fire').first().remove();
+                // fire's clip
+                $('.count-fire').text(6 - $('.box-wrap .fire').length + ' / 6')
+                return;
+            }
+            speed = 100;
+            $('.fire').css('left', '+=100');
+            let id = setInterval(shoot, 500);
+            shoot_id_array.push(id);
+            if ($('.box-wrap .fire').length === 0) {
+                for (let i of shoot_id_array) {
+                    clearInterval(i);
+                }
+            }
+        }
+        let score = 0;
+        // meteorite move setting
+        const stoneMove = () => {
+            // let stones = [];
+            // let fires = [];
+            // console.log($('.meteorite-wrap').css('left'));
+            if (parseInt($('.meteorite-wrap').css('left')) < -1200) {
+                $('.meteorite-wrap').remove();
+                return;
+            }
+            $('.stone').each((stoneInd, stoneEl) => {
+                $('.fire').each((fireInd, fireEl) => {
+                    if (Math.abs($(stoneEl).offset().top + 75 - $(fireEl).offset().top) < 70 &&
+                        Math.abs($(stoneEl).offset().left + 50 - $(fireEl).offset().left) < 50) {
+                        // console.log('fireEl top',$(fireEl).offset().top);
+                        $('body').append('<audio class="boom" hidden src="./explode1.wav"></audio>')
+                        $('.boom').last()[0].play();
+                        $('.box-wrap').append('<div class="explode"></div>');
+                        $('.explode').last().offset({
+                            top: $(stoneEl).offset().top,
+                            left: $(stoneEl).offset().left
+                        })
+                        // console.log($(stoneEl).offset());
+                        $(stoneEl).remove();
+                        $(fireEl).eq(fireInd).remove();
+                        score++;
+                        // 分數計算
+                        $('.count-score').text('SCORE : ' + score);
+                        // 補回彈夾
+                        $('.count-fire').text(6 - $('.box-wrap .fire').length + ' / 6');
+                    }
+                })
+                if (Math.abs($(stoneEl).offset().top + 30 - $('.box').offset().top) < 50 &&
+                    Math.abs($(stoneEl).offset().left - $('.box').offset().left) < 50) {
+                    // 飛機碰到隕石 跳defeat
+                    $('.box').css('transition', 'none');
+                    $('.box').css('opacity', '0');
+                    $('.box-wrap').append('<div class="explode"></div>');
+                    $('.explode').last().offset({
+                        top: $('.box').offset().top + 30,
+                        left: $('.box').offset().left + 30
+                    })
+                    $('.stone').remove();
+                    $('.defeat-wall').css('top', '0');
+                    $('.shoot').remove();
+                    $('.boom').remove();
+                    // defeat 音效 只播放一次
+                    $('body').append('<audio class="defeat" hidden src="./defeat.mp3"></audio>');
+                    if ($('.defeat').length === 1) {
+                        $('.defeat')[0].play();
+                    }
+                }
+            })
+            // 隕石沒了 跳victory
+            // console.log($('.stone').length);
+            if ($('.stone').length === 0) {
+                $('.box').css('opacity', '0');
+                $('.fire').remove();
+                $('.victory-wall').css('top', '0');
+                $('.shoot').remove();
+                $('.boom').remove();
+                // victory 音效 只播放一次
+                $('body').append('<audio class="victory" hidden src="./Victory.mp3"></audio>');
+                if ($('.victory').length === 1) {
+                    $('.victory')[0].play();
+                }
+            }
+            $('.meteorite-wrap').css('left', '-=30px');
+            // console.log($('.meteorite-wrap').offset().left);
+            if ($('.meteorite-wrap').offset().left < -1200) {
+                $('.box').css('opacity', '0');
+                $('.fire').remove();
+                $('.victory-wall').css('top', '0');
+                $('.shoot').remove();
+                $('.boom').remove();
+                // victory 音效 只播放一次
+                $('body').append('<audio class="victory" hidden src="./Victory.mp3"></audio>');
+                if ($('.victory').length === 1) {
+                    $('.victory')[0].play();
+                }
+            }
+            setTimeout(stoneMove, 300);
+        };
+    </script>
+</body>
+
+</html>
